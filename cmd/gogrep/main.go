@@ -22,6 +22,9 @@ func main() {
 	var recursive bool
 	flag.BoolVar(&recursive, "r", true, "List files in a directory recursively.")
 
+	var insensitive bool
+	flag.BoolVar(&insensitive, "i", false, "Case-Insensitive Search.")
+
 	flag.Parse()
 
 	pattern := gogrep.PatternString()
