@@ -1,4 +1,4 @@
-package gogrep2
+package gogrep
 
 import (
 	"os"
