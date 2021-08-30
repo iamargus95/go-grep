@@ -11,7 +11,7 @@ func main() {
 
 	fileContents, _ := gogrep.ReadFile(os.Args[2])
 	pattern := os.Args[1]
-	greppedLine := gogrep.Grep(fileContents, pattern)
+	output := gogrep.Grep(fileContents, pattern)
 
-	fmt.Println(greppedLine)
+	fmt.Println(output)
 }

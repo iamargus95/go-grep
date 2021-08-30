@@ -2,7 +2,7 @@ package gogrep
 
 import (
 	"io/ioutil"
-	"regexp"
+	"strings"
 )
 
 func ReadFile(filepath string) ([]byte, error) {
@@ -11,7 +11,14 @@ func ReadFile(filepath string) ([]byte, error) {
 }
 
 func Grep(fileContents []byte, pattern string) []string {
-	r := regexp.MustCompile(pattern)
+	splitFile := strings.Split(string(fileContents), ".")
+	var outputString []string
+	for index, line := range splitFile {
+		if !strings.Contains(line, pattern) {
 
-	return (r.FindAllString(string(fileContents), -1))
+		} else {
+			outputString = append(outputString, (splitFile[index])+"\n")
+		}
+	}
+	return outputString
 }

@@ -1,6 +1,7 @@
 package gogrep
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -29,8 +30,8 @@ var testCases = []struct {
 func TestGrep(t *testing.T) {
 	for _, tc := range testCases {
 		actual := Grep(tc.Files, tc.Pattern)
-		if actual != tc.Expected {
-
+		if !reflect.DeepEqual(actual, tc.Expected) {
+			t.Errorf("Error Found.")
 		}
 	}
 }
