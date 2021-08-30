@@ -1,3 +1,3 @@
-module iamargus95/go-grep
+module gogrep
 
 go 1.17
