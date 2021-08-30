@@ -34,5 +34,5 @@ func SearchString(path, pattern string) string {
 }
 
 func PatternString() string {
-	return (os.Args[1])
+	return (os.Args[2])
 }
