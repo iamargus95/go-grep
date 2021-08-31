@@ -54,15 +54,22 @@ func Grep(fileContents []string, pattern string) []string {
 		return outputString
 
 	} else if count {
+		var countOutput int
+		var length int
+		var outputSlice []string
+
 		for _, line := range fileContents {
 			if !strings.Contains(line, pattern) {
 
 			} else {
-				matches := strings.Count(line, pattern)
-				outputString = append(outputString, strconv.Itoa(matches))
+				countOutput += strings.Count(line, pattern)
 			}
+			outputStr := strconv.Itoa(countOutput)
+			outputString = append(outputString, outputStr)
 		}
-		return outputString
+		length = len(outputString) - 1
+		outputSlice = append(outputSlice, outputString[length])
+		return outputSlice
 
 	} else {
 
