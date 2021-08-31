@@ -9,8 +9,8 @@ import (
 
 func main() {
 
-	fileContents, _ := gogrep.ReadFile(os.Args[2])
-	pattern := os.Args[1]
+	fileContents, _ := gogrep.ReadFile(os.Args[3])
+	pattern := os.Args[2]
 	output := gogrep.Grep(fileContents, pattern)
 
 	fmt.Println(output)
