@@ -8,7 +8,8 @@ import (
 func TestGrep(t *testing.T) {
 	var nil1 []string
 	var testCases = []struct {
-		Files    []string
+		Files []string
+		// Flag     []string
 		Pattern  string
 		Expected []string
 	}{

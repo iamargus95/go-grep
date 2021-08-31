@@ -35,8 +35,10 @@ func Grep(fileContents []string, pattern string) []string {
 
 	var caseSensitive bool
 	flag.BoolVar(&caseSensitive, "i", false, "Do a Case-Insensitive Search.")
+
 	var count bool
 	flag.BoolVar(&count, "c", false, "Number of matches in a string.")
+
 	flag.Parse()
 
 	if caseSensitive {
@@ -57,7 +59,6 @@ func Grep(fileContents []string, pattern string) []string {
 
 			} else {
 				matches := strings.Count(line, pattern)
-				matches += matches
 				outputString = append(outputString, strconv.Itoa(matches))
 			}
 		}
