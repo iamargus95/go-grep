@@ -11,7 +11,7 @@ func ReadFile(filepath string) ([]byte, error) {
 }
 
 func Grep(fileContents []byte, pattern string) []string {
-	splitFile := strings.Split(string(fileContents), ".")
+	splitFile := strings.SplitAfter(string(fileContents), ".")
 	var outputString []string
 	for index, line := range splitFile {
 		if !strings.Contains(line, pattern) {
