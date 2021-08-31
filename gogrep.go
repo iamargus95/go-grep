@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -32,10 +33,13 @@ func Grep(fileContents []string, pattern string) []string {
 
 	var outputString []string
 
-	caseSensitive := flag.Bool("i", true, "Do a Case-Insensitive Search.")
+	var caseSensitive bool
+	flag.BoolVar(&caseSensitive, "i", false, "Do a Case-Insensitive Search.")
+	var count bool
+	flag.BoolVar(&count, "c", false, "Number of matches in a string.")
 	flag.Parse()
 
-	if *caseSensitive {
+	if caseSensitive {
 		for index, line := range fileContents {
 			lineLower := strings.ToLower(line)
 			patternLower := strings.ToLower(pattern)
@@ -43,6 +47,18 @@ func Grep(fileContents []string, pattern string) []string {
 
 			} else {
 				outputString = append(outputString, (fileContents[index]))
+			}
+		}
+		return outputString
+
+	} else if count {
+		for _, line := range fileContents {
+			if !strings.Contains(line, pattern) {
+
+			} else {
+				matches := strings.Count(line, pattern)
+				matches += matches
+				outputString = append(outputString, strconv.Itoa(matches))
 			}
 		}
 		return outputString
