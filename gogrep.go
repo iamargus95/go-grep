@@ -1,38 +1,24 @@
 package gogrep
 
 import (
-	"bufio"
-	"log"
-	"os"
-	"regexp"
+	"io/ioutil"
+	"strings"
 )
 
-func SearchString(path, pattern string) string {
-
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-
-	r, err := regexp.Compile(pattern)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for scanner.Scan() {
-		if r.MatchString(scanner.Text()) {
-			return (scanner.Text())
-		}
-	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-	return (scanner.Text())
-
+func ReadFile(filepath string) ([]byte, error) {
+	data, err := ioutil.ReadFile(filepath)
+	return data, err
 }
 
-func PatternString() string {
-	return (os.Args[2])
+func Grep(fileContents []byte, pattern string) []string {
+	splitFile := strings.SplitAfter(string(fileContents), ".")
+	var outputString []string
+	for index, line := range splitFile {
+		if !strings.Contains(line, pattern) {
+
+		} else {
+			outputString = append(outputString, (splitFile[index])+"\n")
+		}
+	}
+	return outputString
 }
