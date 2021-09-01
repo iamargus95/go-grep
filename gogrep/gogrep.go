@@ -49,3 +49,19 @@ func Grep(fileContents []string, pattern string) []string {
 	}
 	return outputString
 }
+
+func GrepAfter(after int, fileContents []string, pattern string) []string {
+	var outputString []string
+
+	for index, line := range fileContents {
+		if !strings.Contains(line, pattern) {
+		} else {
+			outputString = append(outputString, fileContents[index])
+			for i := 0; i < after; i++ {
+				outputString = append(outputString, (fileContents[index+i+1]))
+			}
+
+		}
+	}
+	return outputString
+}

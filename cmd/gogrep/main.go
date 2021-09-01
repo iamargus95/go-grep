@@ -15,6 +15,9 @@ func main() {
 	var count bool
 	flag.BoolVar(&count, "c", false, "Number of matches in a string.")
 
+	var after int
+	flag.IntVar(&after, "A", 0, "Shows number of lines after the Match.")
+
 	flag.Parse()
 
 	fileContents, _ := iofile.ReadFile(flag.Arg(1))
@@ -25,6 +28,9 @@ func main() {
 		fmt.Println(output)
 	} else if count {
 		output := gogrep.GrepCount(fileContents, pattern)
+		fmt.Println(output)
+	} else if after != 0 {
+		output := gogrep.GrepAfter(after, fileContents, pattern)
 		fmt.Println(output)
 	} else {
 		output := gogrep.Grep(fileContents, pattern)
