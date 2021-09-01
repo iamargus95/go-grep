@@ -1,7 +1,6 @@
 package gogrep
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -25,7 +24,6 @@ func GrepCaseInsensitive(fileContents []string, pattern string) []string {
 func GrepCount(fileContents []string, pattern string) []string {
 
 	var countOutput int
-	var length int
 	var outputSlice []string
 
 	for _, line := range fileContents {
@@ -38,20 +36,19 @@ func GrepCount(fileContents []string, pattern string) []string {
 		outputString = append(outputString, outputStr)
 	}
 
-	length = len(outputString) - 1
-	outputSlice = append(outputSlice, outputString[length])
+	outputSlice = append(outputSlice, outputString[(len(outputString)-1)])
 	return outputSlice
 }
 
 func Grep(fileContents []string, pattern string) []string {
 
 	for index, line := range fileContents {
+
 		if !strings.Contains(line, pattern) {
 
 		} else {
 			outputString = append(outputString, (fileContents[index]))
 		}
 	}
-	fmt.Println(outputString)
 	return outputString
 }
