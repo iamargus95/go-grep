@@ -5,10 +5,8 @@ import (
 	"strings"
 )
 
-var outputString []string
-
 func GrepCaseInsensitive(fileContents []string, pattern string) []string {
-
+	var outputString []string
 	for index, line := range fileContents {
 		lineLower := strings.ToLower(line)
 		patternLower := strings.ToLower(pattern)
@@ -22,7 +20,7 @@ func GrepCaseInsensitive(fileContents []string, pattern string) []string {
 }
 
 func GrepCount(fileContents []string, pattern string) []string {
-
+	var outputString []string
 	var countOutput int
 	var outputSlice []string
 
@@ -41,13 +39,12 @@ func GrepCount(fileContents []string, pattern string) []string {
 }
 
 func Grep(fileContents []string, pattern string) []string {
-
+	var outputString []string
 	for index, line := range fileContents {
-
 		if !strings.Contains(line, pattern) {
-
 		} else {
 			outputString = append(outputString, (fileContents[index]))
+
 		}
 	}
 	return outputString

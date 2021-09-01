@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 
 	fileContents, _ := iofile.ReadFile(flag.Arg(1))
-	pattern := flag.Arg(2)
+	pattern := flag.Arg(0)
 
 	if caseSensitive {
 		output := gogrep.GrepCaseInsensitive(fileContents, pattern)
