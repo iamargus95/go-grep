@@ -10,9 +10,7 @@ func GrepCaseInsensitive(fileContents []string, pattern string) []string {
 	for index, line := range fileContents {
 		lineLower := strings.ToLower(line)
 		patternLower := strings.ToLower(pattern)
-		if !strings.Contains(lineLower, patternLower) {
-
-		} else {
+		if strings.Contains(lineLower, patternLower) {
 			outputString = append(outputString, (fileContents[index]))
 		}
 	}
@@ -25,9 +23,7 @@ func GrepCount(fileContents []string, pattern string) []string {
 	var outputSlice []string
 
 	for _, line := range fileContents {
-		if !strings.Contains(line, pattern) {
-
-		} else {
+		if strings.Contains(line, pattern) {
 			countOutput += strings.Count(line, pattern)
 		}
 		outputStr := strconv.Itoa(countOutput)
@@ -41,8 +37,7 @@ func GrepCount(fileContents []string, pattern string) []string {
 func Grep(fileContents []string, pattern string) []string {
 	var outputString []string
 	for index, line := range fileContents {
-		if !strings.Contains(line, pattern) {
-		} else {
+		if strings.Contains(line, pattern) {
 			outputString = append(outputString, (fileContents[index]))
 
 		}
@@ -54,13 +49,39 @@ func GrepAfter(after int, fileContents []string, pattern string) []string {
 	var outputString []string
 
 	for index, line := range fileContents {
-		if !strings.Contains(line, pattern) {
-		} else {
+
+		if strings.Contains(line, pattern) {
 			outputString = append(outputString, fileContents[index])
-			for i := 0; i < after; i++ {
-				outputString = append(outputString, (fileContents[index+i+1]))
+
+			length := len(fileContents)
+			if index+after > length {
+				after = length - index
 			}
 
+			for i := 1; i < after; i++ {
+				outputString = append(outputString, (fileContents[index+i]))
+			}
+		}
+	}
+	return outputString
+}
+
+func GrepBefore(before int, fileContents []string, pattern string) []string {
+	var outputString []string
+
+	for index, line := range fileContents {
+
+		if strings.Contains(line, pattern) {
+			outputString = append(outputString, fileContents[index])
+
+			length := len(fileContents)
+			if index+before > length {
+				before = length - index
+			}
+
+			for i := 1; i < before; i++ {
+				outputString = append(outputString, (fileContents[index-i]))
+			}
 		}
 	}
 	return outputString

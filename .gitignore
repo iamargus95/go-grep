@@ -19,3 +19,4 @@ cmd/gogrep/file.txt
 cmd/gogrep/test.txt
 cmd/gogrep/test1.txt
 future code.txt
+cmd/gogrep/readme.txt

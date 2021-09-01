@@ -18,6 +18,9 @@ func main() {
 	var after int
 	flag.IntVar(&after, "A", 0, "Shows number of lines after the Match.")
 
+	var before int
+	flag.IntVar(&before, "B", 0, "Shows number of lines before the Match.")
+
 	flag.Parse()
 
 	fileContents, _ := iofile.ReadFile(flag.Arg(1))
@@ -25,15 +28,34 @@ func main() {
 
 	if caseSensitive {
 		output := gogrep.GrepCaseInsensitive(fileContents, pattern)
-		fmt.Println(output)
+
+		for i := 0; i < len(output); i++ {
+			fmt.Println(output[i])
+		}
+
 	} else if count {
 		output := gogrep.GrepCount(fileContents, pattern)
 		fmt.Println(output)
+
 	} else if after != 0 {
 		output := gogrep.GrepAfter(after, fileContents, pattern)
-		fmt.Println(output)
+
+		for i := 0; i < len(output); i++ {
+			fmt.Println(output[i])
+		}
+
+	} else if before != 0 {
+		output := gogrep.GrepBefore(before, fileContents, pattern)
+
+		for i := 0; i < len(output); i++ {
+			fmt.Println(output[before-i-1])
+		}
+
 	} else {
 		output := gogrep.Grep(fileContents, pattern)
-		fmt.Println(output)
+
+		for i := 0; i < len(output); i++ {
+			fmt.Println(output[i])
+		}
 	}
 }
