@@ -84,5 +84,8 @@ func GrepBefore(before int, fileContents []string, pattern string) []string {
 			}
 		}
 	}
+	for i, j := 0, len(outputString)-1; i < j; i, j = i+1, j-1 {
+		outputString[i], outputString[j] = outputString[j], outputString[i]
+	}
 	return outputString
 }

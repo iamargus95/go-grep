@@ -48,7 +48,7 @@ func main() {
 		output := gogrep.GrepBefore(before, fileContents, pattern)
 
 		for i := 0; i < len(output); i++ {
-			fmt.Println(output[before-i-1])
+			fmt.Println(output[i])
 		}
 
 	} else {
