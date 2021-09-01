@@ -1,3 +1,3 @@
-module github.com/iamargus95/go-grep/gogrep
+module iamargus95/gogrep
 
 go 1.17

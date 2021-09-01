@@ -18,3 +18,4 @@ cmd/gogrep/file.txt
 .gitignore
 cmd/gogrep/test.txt
 cmd/gogrep/test1.txt
+future code.txt

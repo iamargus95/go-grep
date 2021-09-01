@@ -3,9 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-
-	gogrep "github.com/iamargus95/go-grep/gogrep"
-	iofile "github.com/iamargus95/go-grep/iofile"
+	"iamargus95/gogrep/gogrep"
+	"iamargus95/gogrep/iofile"
 )
 
 func main() {
