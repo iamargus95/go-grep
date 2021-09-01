@@ -12,6 +12,7 @@ func GrepCaseInsensitive(fileContents []string, pattern string) []string {
 		patternLower := strings.ToLower(pattern)
 		if strings.Contains(lineLower, patternLower) {
 			outputString = append(outputString, (fileContents[index]))
+			outputString = append(outputString, "--")
 		}
 	}
 	return outputString
@@ -39,6 +40,7 @@ func Grep(fileContents []string, pattern string) []string {
 	for index, line := range fileContents {
 		if strings.Contains(line, pattern) {
 			outputString = append(outputString, (fileContents[index]))
+			outputString = append(outputString, "--")
 
 		}
 	}
@@ -51,27 +53,27 @@ func GrepAfter(after int, fileContents []string, pattern string) []string {
 	for index, line := range fileContents {
 
 		if strings.Contains(line, pattern) {
-			outputString = append(outputString, fileContents[index])
-
 			length := len(fileContents)
-			if index+after > length {
-				after = length - index
+			if index+after+1 > length {
+				after = length - index - 1
 			}
 
-			for i := 1; i < after; i++ {
+			for i := 0; i <= after; i++ {
 				outputString = append(outputString, (fileContents[index+i]))
 			}
+			outputString = append(outputString, "--")
 		}
 	}
 	return outputString
 }
 
-func GrepBefore(before int, fileContents []string, pattern string) []string {
-	var outputString []string
-
-	for index, line := range fileContents {
+func GrepBefore(before int, fileContents []string, pattern string) []string { //----------> Does not handle multiple matches on separate strings which are
+	var outputString []string               //----------------------------------------------closer than IntVar as expected. When adding "--"
+	for index, line := range fileContents { //----------------------------------------------And reverses the order in which match was found.
 
 		if strings.Contains(line, pattern) {
+			outputString = append(outputString, "--")
+
 			outputString = append(outputString, fileContents[index])
 
 			if index-before <= 0 {
@@ -83,7 +85,7 @@ func GrepBefore(before int, fileContents []string, pattern string) []string {
 			}
 		}
 	}
-	for i, j := 0, len(outputString)-1; i < j; i, j = i+1, j-1 {
+	for i, j := 0, len(outputString)-1; i <= j; i, j = i+1, j-1 {
 		outputString[i], outputString[j] = outputString[j], outputString[i]
 	}
 	return outputString
