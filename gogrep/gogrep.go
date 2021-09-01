@@ -74,12 +74,11 @@ func GrepBefore(before int, fileContents []string, pattern string) []string {
 		if strings.Contains(line, pattern) {
 			outputString = append(outputString, fileContents[index])
 
-			length := len(fileContents)
-			if index+before > length {
-				before = length - index
+			if index-before <= 0 {
+				before = index
 			}
 
-			for i := 1; i < before; i++ {
+			for i := 1; i < before+1; i++ {
 				outputString = append(outputString, (fileContents[index-i]))
 			}
 		}
