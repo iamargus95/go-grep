@@ -185,7 +185,7 @@ var testGrepBefore = []struct {
 		flagint:   3,
 		inputText: []string{"This is One2N Consulting.", "One2N employs Backend Engineers and Software Engineers."},
 		pattern:   "One2N",
-		output:    []string{"One2N employs Backend Engineers and Software Engineers.", "--", "This is One2N Consulting.", "--"},
+		output:    []string{"This is One2N Consulting.", "--", "This is One2N Consulting.", "One2N employs Backend Engineers and Software Engineers.", "--"},
 	},
 }
 
