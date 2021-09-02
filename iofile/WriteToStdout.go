@@ -3,8 +3,17 @@ package iofile
 import "fmt"
 
 func WriteToStdout(result chan []string) {
-	output := <-result
-	for i := 0; i < len(output); i++ {
+
+	length := len(result)
+
+	for i := 0; i < length; i++ {
+		output, open := <-result
+
+		if !open {
+			break
+		}
+
 		fmt.Println(output[i])
 	}
+
 }

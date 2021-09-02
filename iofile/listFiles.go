@@ -2,30 +2,29 @@ package iofile
 
 import (
 	"bufio"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
 )
 
-func ListFilesInDir(rootFilePath string) []string {
-	inputFiles := []string{}
-	err := filepath.Walk(rootFilePath,
-		func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			if !info.IsDir() {
-				inputFiles = append(inputFiles, path)
+func ListFiles(dir string) ([]string, error) {
+	filePaths := []string{}
+	err := filepath.WalkDir(dir,
+		func(path string, d fs.DirEntry, err error) error {
+			if !d.IsDir() {
+				filePaths = append(filePaths, path)
 			}
 			return nil
 		})
 	if err != nil {
-		log.Println(err)
+		return nil, err
 	}
-	return inputFiles
+
+	return filePaths, nil
 }
 
-func ReadFile(filepath string, linesInFile chan []string) {
+func ReadFile(filepath string) ([]string, error) {
 
 	file, err := os.Open(filepath)
 
@@ -43,6 +42,5 @@ func ReadFile(filepath string, linesInFile chan []string) {
 
 	file.Close()
 
-	linesInFile <- txtlines
-	close(linesInFile)
+	return txtlines, scanner.Err()
 }

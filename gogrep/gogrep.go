@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func GrepCaseInsensitive(fileContents []string, pattern string, result chan []string) {
+func GrepCaseInsensitive(fileContents []string, pattern string) []string {
 	var outputString []string
 	for index, line := range fileContents {
 		lineLower := strings.ToLower(line)
@@ -15,11 +15,12 @@ func GrepCaseInsensitive(fileContents []string, pattern string, result chan []st
 			outputString = append(outputString, "--")
 		}
 	}
-	result <- outputString
-	close(result)
+
+	return (outputString)
+
 }
 
-func GrepCount(fileContents []string, pattern string, result chan []string) {
+func GrepCount(fileContents []string, pattern string) []string {
 	var outputString []string
 	var countOutput int
 	var outputSlice []string
@@ -33,11 +34,11 @@ func GrepCount(fileContents []string, pattern string, result chan []string) {
 	}
 	outputSlice = append(outputSlice, outputString[(len(outputString)-1)])
 
-	result <- outputSlice
-	close(result)
+	return (outputSlice)
+
 }
 
-func Grep(fileContents []string, pattern string, result chan []string) {
+func Grep(fileContents []string, pattern string) []string {
 	var outputString []string
 	for index, line := range fileContents {
 		if strings.Contains(line, pattern) {
@@ -46,11 +47,11 @@ func Grep(fileContents []string, pattern string, result chan []string) {
 
 		}
 	}
-	result <- outputString
-	close(result)
+	return (outputString)
+
 }
 
-func GrepAfter(after int, fileContents []string, pattern string, result chan []string) {
+func GrepAfter(after int, fileContents []string, pattern string) []string {
 	var outputString []string
 
 	for index, line := range fileContents {
@@ -67,11 +68,10 @@ func GrepAfter(after int, fileContents []string, pattern string, result chan []s
 			outputString = append(outputString, "--")
 		}
 	}
-	result <- outputString
-	close(result)
+	return (outputString)
 }
 
-func GrepBefore(before int, fileContents []string, pattern string, result chan []string) {
+func GrepBefore(before int, fileContents []string, pattern string) []string {
 	var outputString []string
 	for index, line := range fileContents {
 
@@ -87,6 +87,6 @@ func GrepBefore(before int, fileContents []string, pattern string, result chan [
 			outputString = append(outputString, "--")
 		}
 	}
-	result <- outputString
-	close(result)
+	return (outputString)
+
 }

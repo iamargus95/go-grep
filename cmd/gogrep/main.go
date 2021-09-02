@@ -4,9 +4,42 @@ import (
 	"flag"
 	"iamargus95/gogrep/gogrep"
 	"iamargus95/gogrep/iofile"
+	"log"
+	"sync"
 )
 
 func main() {
+
+	flag.Parse()
+
+	pattern := flag.Arg(0)
+	rootPath := flag.Arg(1)
+
+	paths, err := iofile.ListFiles(rootPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	outputChan := make(chan []string)
+	var wg sync.WaitGroup
+	for _, path := range paths {
+		wg.Add(1)
+		go worker(path, pattern, outputChan, &wg)
+
+	}
+
+	go func() {
+
+		iofile.WriteToStdout(outputChan)
+
+	}()
+
+	wg.Wait()
+}
+
+func worker(path, pattern string, outputChan chan<- []string, wg *sync.WaitGroup) {
+
+	defer wg.Done()
 
 	var caseSensitive bool
 	flag.BoolVar(&caseSensitive, "i", false, "Do a Case-Insensitive Search.")
@@ -20,35 +53,21 @@ func main() {
 	var before int
 	flag.IntVar(&before, "B", 0, "Shows number of lines before the Match.")
 
-	flag.Parse()
+	fileContents, _ := iofile.ReadFile(path)
 
-	result := make(chan []string)
-	linesInFile := make(chan []string)
+	if caseSensitive {
+		gogrep.GrepCaseInsensitive(fileContents, pattern)
 
-	pattern := flag.Arg(0)
+	} else if count {
+		gogrep.GrepCount(fileContents, pattern)
 
-	filesToBeRead := iofile.ListFilesInDir(flag.Arg(1))
+	} else if after > 0 {
+		gogrep.GrepAfter(after, fileContents, pattern)
 
-	for i := 0; i < len(filesToBeRead); i++ {
-		go iofile.ReadFile(filesToBeRead[i], linesInFile)
+	} else if before > 0 {
+		gogrep.GrepBefore(before, fileContents, pattern)
 
-		if caseSensitive {
-			go gogrep.GrepCaseInsensitive(<-linesInFile, pattern, result)
-
-		} else if count {
-			go gogrep.GrepCount(<-linesInFile, pattern, result)
-
-		} else if after > 0 {
-			go gogrep.GrepAfter(after, <-linesInFile, pattern, result)
-
-		} else if before > 0 {
-			go gogrep.GrepBefore(before, <-linesInFile, pattern, result)
-
-		} else {
-			go gogrep.Grep(<-linesInFile, pattern, result)
-
-		}
+	} else {
+		gogrep.Grep(fileContents, pattern)
 	}
-
-	iofile.WriteToStdout(result)
 }
