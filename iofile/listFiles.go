@@ -1,6 +1,7 @@
 package iofile
 
 import (
+	"bufio"
 	"log"
 	"os"
 	"path/filepath"
@@ -22,4 +23,26 @@ func ListFilesInDir(rootFilePath string) []string {
 		log.Println(err)
 	}
 	return inputFiles
+}
+
+func ReadFile(filepath string, linesInFile chan []string) {
+
+	file, err := os.Open(filepath)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var txtlines []string
+
+	for scanner.Scan() {
+		txtlines = append(txtlines, scanner.Text())
+	}
+
+	file.Close()
+
+	linesInFile <- txtlines
+	close(linesInFile)
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"iamargus95/gogrep/gogrep"
 	"iamargus95/gogrep/iofile"
 )
@@ -23,42 +22,33 @@ func main() {
 
 	flag.Parse()
 
-	var fileContents []string
-	pattern := flag.Arg(0)
-	listOfFiles := iofile.ListFilesInDir(flag.Arg(1))
-	for i := 0; i < len(listOfFiles); i++ {
-		fileContents, _ = iofile.ReadFile(listOfFiles[i])
-		if caseSensitive {
-			output := gogrep.GrepCaseInsensitive(fileContents, pattern)
+	result := make(chan []string)
+	linesInFile := make(chan []string)
 
-			for i := 0; i < len(output); i++ {
-				fmt.Println(output[i])
-			}
+	pattern := flag.Arg(0)
+
+	filesToBeRead := iofile.ListFilesInDir(flag.Arg(1))
+
+	for i := 0; i < len(filesToBeRead); i++ {
+		go iofile.ReadFile(filesToBeRead[i], linesInFile)
+
+		if caseSensitive {
+			go gogrep.GrepCaseInsensitive(<-linesInFile, pattern, result)
 
 		} else if count {
-			output := gogrep.GrepCount(fileContents, pattern)
-			fmt.Println(output)
+			go gogrep.GrepCount(<-linesInFile, pattern, result)
 
 		} else if after > 0 {
-			output := gogrep.GrepAfter(after, fileContents, pattern)
-
-			for i := 0; i < len(output); i++ {
-				fmt.Println(output[i])
-			}
+			go gogrep.GrepAfter(after, <-linesInFile, pattern, result)
 
 		} else if before > 0 {
-			output := gogrep.GrepBefore(before, fileContents, pattern)
-
-			for i := 0; i < len(output); i++ {
-				fmt.Println(output[i])
-			}
+			go gogrep.GrepBefore(before, <-linesInFile, pattern, result)
 
 		} else {
-			output := gogrep.Grep(fileContents, pattern)
+			go gogrep.Grep(<-linesInFile, pattern, result)
 
-			for i := 0; i < len(output); i++ {
-				fmt.Println(output[i])
-			}
 		}
 	}
+
+	iofile.WriteToStdout(result)
 }
