@@ -67,26 +67,21 @@ func GrepAfter(after int, fileContents []string, pattern string) []string {
 	return outputString
 }
 
-func GrepBefore(before int, fileContents []string, pattern string) []string { //----------> Does not handle multiple matches on separate strings which are
-	var outputString []string               //----------------------------------------------closer than IntVar as expected. When adding "--"
-	for index, line := range fileContents { //----------------------------------------------And reverses the order in which match was found.
+func GrepBefore(before int, fileContents []string, pattern string) []string {
+	var outputString []string
+	for index, line := range fileContents {
 
 		if strings.Contains(line, pattern) {
-			outputString = append(outputString, "--")
-
-			outputString = append(outputString, fileContents[index])
 
 			if index-before <= 0 {
-				before = index
+				before = 0
 			}
 
-			for i := 1; i < before+1; i++ {
-				outputString = append(outputString, (fileContents[index-i]))
+			for i := before; i <= index; i++ {
+				outputString = append(outputString, (fileContents[i]))
 			}
+			outputString = append(outputString, "--")
 		}
-	}
-	for i, j := 0, len(outputString)-1; i <= j; i, j = i+1, j-1 {
-		outputString[i], outputString[j] = outputString[j], outputString[i]
 	}
 	return outputString
 }
