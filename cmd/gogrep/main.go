@@ -11,7 +11,19 @@ import (
 
 func main() {
 
+	var caseSensitive bool
+	flag.BoolVar(&caseSensitive, "i", false, "Do a Case-Insensitive Search.")
+
+	var count bool
+	flag.BoolVar(&count, "c", false, "Number of matches in a string.")
+
+	var after int
+	flag.IntVar(&after, "A", 0, "Shows number of lines after the Match.")
+
+	var before int
+	flag.IntVar(&before, "B", 0, "Shows number of lines before the Match.")
 	flag.Parse()
+
 	pattern := flag.Arg(0)
 	rootPath := flag.Arg(1)
 
@@ -24,7 +36,7 @@ func main() {
 	var wg sync.WaitGroup
 	for _, path := range paths {
 		wg.Add(1)
-		go worker(path, pattern, outputChan, &wg)
+		go worker(caseSensitive, count, after, before, path, pattern, outputChan, &wg)
 
 	}
 
@@ -37,21 +49,10 @@ func main() {
 	wg.Wait()
 }
 
-func worker(path, pattern string, outputChan chan<- []string, wg *sync.WaitGroup) {
+func worker(caseSensitive bool, count bool, after int, before int, path, pattern string,
+	outputChan chan<- []string, wg *sync.WaitGroup) {
 
 	defer wg.Done()
-
-	var (
-		caseSensitive bool
-		count         bool
-		after         int
-		before        int
-	)
-
-	flag.BoolVar(&caseSensitive, "i", false, "Do a Case-Insensitive Search.")
-	flag.BoolVar(&count, "c", false, "Number of matches in a string.")
-	flag.IntVar(&after, "A", 0, "Shows number of lines after the Match.")
-	flag.IntVar(&before, "B", 0, "Shows number of lines before the Match.")
 
 	fileContents, _ := iofile.ReadFile(path)
 
