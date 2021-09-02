@@ -9,13 +9,6 @@ import (
 	"sync"
 )
 
-var (
-	caseSensitive bool
-	count         bool
-	after         int
-	before        int
-)
-
 func main() {
 
 	flag.Parse()
@@ -47,6 +40,13 @@ func main() {
 func worker(path, pattern string, outputChan chan<- []string, wg *sync.WaitGroup) {
 
 	defer wg.Done()
+
+	var (
+		caseSensitive bool
+		count         bool
+		after         int
+		before        int
+	)
 
 	flag.BoolVar(&caseSensitive, "i", false, "Do a Case-Insensitive Search.")
 	flag.BoolVar(&count, "c", false, "Number of matches in a string.")
