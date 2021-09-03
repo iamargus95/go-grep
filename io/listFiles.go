@@ -1,4 +1,4 @@
-package iofile
+package io
 
 import (
 	"bufio"
