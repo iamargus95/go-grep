@@ -46,7 +46,9 @@ func main() {
 	go func() {
 
 		for output := range outputChan {
-			fmt.Println(output)
+			for i := 0; i < len(output); i++ {
+				fmt.Println(output[i])
+			}
 		}
 	}()
 
