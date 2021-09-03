@@ -22,6 +22,10 @@ func main() {
 
 	var before int
 	flag.IntVar(&before, "B", 0, "Shows number of lines before the Match.")
+
+	var recursive bool
+	flag.BoolVar(&recursive, "r", false, "Searches every file inside a directory.")
+
 	flag.Parse()
 
 	pattern := flag.Arg(0)
@@ -37,12 +41,12 @@ func main() {
 	for _, path := range paths {
 		wg.Add(1)
 		go worker(caseSensitive, count, after, before, path, pattern, outputChan, &wg)
-
 	}
 
 	go func() {
-		for results := range outputChan {
-			fmt.Println(results)
+
+		for output := range outputChan {
+			fmt.Println(output)
 		}
 	}()
 
@@ -50,30 +54,28 @@ func main() {
 }
 
 func worker(caseSensitive bool, count bool, after int, before int, path, pattern string,
-	outputChan chan<- []string, wg *sync.WaitGroup) {
+	outputChan chan []string, wg *sync.WaitGroup) {
 
+	var result []string
 	defer wg.Done()
 
 	fileContents, _ := iofile.ReadFile(path)
 
 	if caseSensitive {
-		result := gogrep.GrepCaseInsensitive(fileContents, pattern)
-		outputChan <- result
+		result = gogrep.GrepCaseInsensitive(fileContents, pattern)
 
 	} else if count {
-		result := gogrep.GrepCount(fileContents, pattern)
-		outputChan <- result
+		result = gogrep.GrepCount(fileContents, pattern)
 
 	} else if after > 0 {
-		result := gogrep.GrepAfter(after, fileContents, pattern)
-		outputChan <- result
+		result = gogrep.GrepAfter(after, fileContents, pattern)
 
 	} else if before > 0 {
-		result := gogrep.GrepBefore(before, fileContents, pattern)
-		outputChan <- result
+		result = gogrep.GrepBefore(before, fileContents, pattern)
 
 	} else {
-		result := gogrep.Grep(fileContents, pattern)
-		outputChan <- result
+		result = gogrep.Grep(fileContents, pattern)
 	}
+
+	outputChan <- result
 }
