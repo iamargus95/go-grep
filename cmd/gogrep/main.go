@@ -2,18 +2,13 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"iamargus95/gogrep/gogrep"
-	"iamargus95/gogrep/iofile"
+	"iamargus95/gogrep/io"
+	"log"
+	"sync"
 )
 
 func main() {
-
-	var caseSensitive bool
-	flag.BoolVar(&caseSensitive, "i", false, "Do a Case-Insensitive Search.")
-
-	var count bool
-	flag.BoolVar(&count, "c", false, "Number of matches in a string.")
 
 	var after int
 	flag.IntVar(&after, "A", 0, "Shows number of lines after the Match.")
@@ -21,44 +16,102 @@ func main() {
 	var before int
 	flag.IntVar(&before, "B", 0, "Shows number of lines before the Match.")
 
+	var caseSensitive bool
+	flag.BoolVar(&caseSensitive, "i", false, "Do a Case-Insensitive Search.")
+
+	var count bool
+	flag.BoolVar(&count, "c", false, "Number of matches in a string.")
+
 	flag.Parse()
 
-	var fileContents []string
 	pattern := flag.Arg(0)
-	listOfFiles := iofile.ListFilesInDir(flag.Arg(1))
-	for i := 0; i < len(listOfFiles); i++ {
-		fileContents, _ = iofile.ReadFile(listOfFiles[i])
-		if caseSensitive {
-			output := gogrep.GrepCaseInsensitive(fileContents, pattern)
+	rootPath := flag.Arg(1)
 
-			for i := 0; i < len(output); i++ {
-				fmt.Println(output[i])
-			}
+	paths, err := io.ListFiles(rootPath)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		} else if count {
-			output := gogrep.GrepCount(fileContents, pattern)
-			fmt.Println(output)
+	outputChan := make(chan []string)
+	var wg sync.WaitGroup
 
-		} else if after > 0 {
-			output := gogrep.GrepAfter(after, fileContents, pattern)
+	if caseSensitive {
 
-			for i := 0; i < len(output); i++ {
-				fmt.Println(output[i])
-			}
+		for _, path := range paths {
+			wg.Add(1)
+			go workerCase(caseSensitive, path, pattern, outputChan, &wg)
+		}
 
-		} else if before > 0 {
-			output := gogrep.GrepBefore(before, fileContents, pattern)
+	} else if after > 0 {
 
-			for i := 0; i < len(output); i++ {
-				fmt.Println(output[i])
-			}
+		for _, path := range paths {
+			wg.Add(1)
+			go workerAfter(after, path, pattern, outputChan, &wg)
+		}
 
-		} else {
-			output := gogrep.Grep(fileContents, pattern)
+	} else if before > 0 {
 
-			for i := 0; i < len(output); i++ {
-				fmt.Println(output[i])
-			}
+		for _, path := range paths {
+			wg.Add(1)
+			go workerBefore(before, path, pattern, outputChan, &wg)
+		}
+
+	} else if count {
+
+		for _, path := range paths {
+			wg.Add(1)
+			go workerCount(count, path, pattern, outputChan, &wg)
+		}
+
+	} else {
+
+		for _, path := range paths {
+			wg.Add(1)
+			go worker(path, pattern, outputChan, &wg)
 		}
 	}
+
+	go io.WriteToStdout(outputChan)
+	wg.Wait()
+
+}
+
+func workerAfter(after int, path string, pattern string, outputChan chan []string, wg *sync.WaitGroup) {
+	var result []string
+	defer wg.Done()
+	fileContents, _ := io.ReadFile(path)
+	result = gogrep.GrepAfter(after, fileContents, pattern)
+	outputChan <- result
+}
+
+func workerBefore(before int, path string, pattern string, outputChan chan []string, wg *sync.WaitGroup) {
+	var result []string
+	defer wg.Done()
+	fileContents, _ := io.ReadFile(path)
+	result = gogrep.GrepBefore(before, fileContents, pattern)
+	outputChan <- result
+}
+
+func workerCase(caseSensitive bool, path string, pattern string, outputChan chan []string, wg *sync.WaitGroup) {
+	var result []string
+	defer wg.Done()
+	fileContents, _ := io.ReadFile(path)
+	result = gogrep.GrepCaseInsensitive(fileContents, pattern)
+	outputChan <- result
+}
+
+func workerCount(count bool, path string, pattern string, outputChan chan []string, wg *sync.WaitGroup) {
+	var result []string
+	defer wg.Done()
+	fileContents, _ := io.ReadFile(path)
+	result = gogrep.GrepCount(fileContents, pattern)
+	outputChan <- result
+}
+
+func worker(path string, pattern string, outputChan chan []string, wg *sync.WaitGroup) {
+	var result []string
+	defer wg.Done()
+	fileContents, _ := io.ReadFile(path)
+	result = gogrep.Grep(fileContents, pattern)
+	outputChan <- result
 }

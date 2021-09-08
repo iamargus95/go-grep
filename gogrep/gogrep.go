@@ -14,7 +14,8 @@ func Grep(fileContents []string, pattern string) []string {
 
 		}
 	}
-	return outputString
+	return (outputString)
+
 }
 
 func GrepAfter(after int, fileContents []string, pattern string) []string {
@@ -34,7 +35,7 @@ func GrepAfter(after int, fileContents []string, pattern string) []string {
 			outputString = append(outputString, "--")
 		}
 	}
-	return outputString
+	return (outputString)
 }
 
 func GrepBefore(before int, fileContents []string, pattern string) []string {
@@ -53,7 +54,8 @@ func GrepBefore(before int, fileContents []string, pattern string) []string {
 			outputString = append(outputString, "--")
 		}
 	}
-	return outputString
+	return (outputString)
+
 }
 
 func GrepCaseInsensitive(fileContents []string, pattern string) []string {
